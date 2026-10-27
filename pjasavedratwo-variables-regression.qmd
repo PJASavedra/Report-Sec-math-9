@@ -41,27 +41,27 @@ The data was extracted from the 1974 Motor Trend US magazine, and comprises fuel
 
 A data frame with 32 observations on 11 (numeric) variables.
 
--   `mpg` Miles/(US) gallon
+- `mpg` Miles/(US) gallon
 
--   `cyl` Number of cylinders
+- `cyl` Number of cylinders
 
--   `disp` Displacement (cu.in.)
+- `disp` Displacement (cu.in.)
 
--   `hp` Gross horsepower
+- `hp` Gross horsepower
 
--   `drat` Rear axle ratio
+- `drat` Rear axle ratio
 
--   `wt` Weight (1000 lbs)
+- `wt` Weight (1000 lbs)
 
--   `qsec` 1/4 mile time
+- `qsec` 1/4 mile time
 
--   `vs` Engine (0 = V-shaped, 1 = straight)
+- `vs` Engine (0 = V-shaped, 1 = straight)
 
--   `am` Transmission (0 = automatic, 1 = manual)
+- `am` Transmission (0 = automatic, 1 = manual)
 
--   `gear` Number of forward gears
+- `gear` Number of forward gears
 
--   `carb` Number of carburetors
+- `carb` Number of carburetors
 
 The first 6 rows of the data set are shown in @tbl-mtcars
 
