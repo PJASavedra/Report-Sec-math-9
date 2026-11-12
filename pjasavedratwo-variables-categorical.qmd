@@ -1,13 +1,13 @@
 ---
 title: "Two Variables: Qualitative"
-author: Orville D. Hombrebueno
+author: Peter John A. Savedra
 date: today
 format:
   html:
     embed-resources: true
 editor: visual
 toc: true
-code-link: true
+code-link: false
 code-fold: true
 cache: true
 ---
@@ -26,119 +26,73 @@ library(gtsummary)
 library(ggstatsplot)
 library(downlit)
 library(broom)
+library(here)
 
 # load the data
-titanic <- ggstatsplot::Titanic_full |>
+df <- read_csv(here("data", "Simulated_BSED_Math_Research_Data.csv"))
+
+df <- df |>
   mutate(
-    Class = factor(Class)
+    Acad_Perf = factor(
+      Acad_Perf, 
+      levels = c("Satisfactory", "Good", "Very Good", "Excellent"), 
+      ordered = TRUE
+    )
+  )|>
+  select(
+    "Acad_Perf",
+    "Year"
   )
 ```
 
-## The Titanic Data Set
+## Relationship of Bsed-Math Students' Year Level to their Academic Performance
 
-The `Titanic_full` data set of the [{ggstatsplot}]{style="font-family:monospace;"} package is a data frame with 2201 rows and 5 variables.
+The Data Set is gathered from 69 students with 2 variable.
 
--   `id` Dummy identity number for each person.
+- `Acad_Perf` Satisfactory, Good, Very Good, Excellent.
 
--   `Class` 1st, 2nd, 3rd, Crew.
+- `Year` 1st Year, 2nd Year, 3rd Year, 4th Year.
 
--   `Sex` Male, Female.
+This data set provides information on the relationships of Bsed-Math Students' Year Level to their Academic Performance, given that it is Satisfactory, Good, Very Good, Excellent based from their year level.
 
--   `Age` Child, Adult.
-
--   `Survived` No, Yes.
-
-This data set provides information on the fate of passengers on the fatal maiden voyage of the ocean liner Titanic, summarized according to economic status (class), sex, age and survival.
-
-The first 6 rows of the titanic data set are shown in @tbl-titanic.
+The first 6 rows of the titanic data set are shown in @tbl-Acad_Pref.
 
 ```{r}
-#| label: tbl-titanic
+#| label: tbl-Acad_Pref
 #| warning: false
 #| message: false
 #| tbl-cap: "The first 6 observations of the data set."
 
-titanic |>
+df|>
   head() |> # getting the first six rows of the data
-  kable() # creating a table
+  kable(col.names = c("Academic Performance","Bsed-Math Students' Year Level")) # creating a table
 ```
 
 ## Descriptive Statistics
 
-The frequency distribution of `Survived` when grouped according to `Sex` is shown in @tbl-summary. Most of the passengers are male. The majority of female passengers survived, whereas the majority of male passengers did not. Nonetheless, the number of survived passengers for both female and male are close, that is 344 and 367 respectively.
+Academic performance is one of the variables examined in this study to determine the overall academic standing of BSED-Math students from first year to fourth year. The respondents are classified into four categories: Excellent, Very Good, Good, and Satisfactory. The frequency and percentage distribution will show how many students belong to each academic performance category and the proportion they represent in the total number of respondents. The results provide an overview of the academic performance of BSED-Math students across all year levels. The distribution of respondents among the different academic performance categories helps identify the most commonly reported level of academic achievement. It also provides an understanding of the general academic standing of the students, regardless of their year level.
 
 ```{r}
 #| label: tbl-summary
-#| tbl-cap: "Summary statistics of `Survived` when grouped according to `Sex`."
+#| tbl-cap: "Summary statistics of `Acad_Perf` when grouped according to `Year`."
 #| message: false
 
-titanic |> 
+df |> 
   tbl_summary(
-    by = Sex,
-    include = Survived
+    by = Year,
+    include = Acad_Perf
   )
 ```
-
-# Hypothesis Testing
-
-## Research Question
-
-Does a passenger's sex affect their survival status?
-
-## Hypothesis and Test Statistics
-
--   $H_0:p_{Survived}-p_{Sex}=0$; passenger's sex does not affect their survival status.
-
--   $H_a:p_{Survived}-p_{Sex}\ne0$; passenger's sex affects their survival status.
-
--   Significance level, $\alpha=5\%$.
-
--   **Pearson's** $\chi^2$-test of independence
-
--   Independence.
-
--   Expected counts: all expected counts are $\ge5$ (see @tbl-expected).
-
 ```{r}
-#| label: tbl-expected
-#| tbl-cap: Expected counts.
-
-# Create contingency table
-observed <- table(titanic$Survived, titanic$Sex)
-
-# Perform chi-squared test
-chi_test <- chisq.test(observed)
-
-# Extract the expected counts
-expected <- chi_test$expected
-
-# View expected counts
-expected |>
-  as_tibble() |>
-  mutate(
-    " " = c("No", "Yes")
-  ) |>
-  relocate(" ", .before = 1) |>
-  mutate(across(where(is.numeric), ~ round(.x, 2))) |>
-  kable()
+df |>
+  tbl_cross(
+    row = Acad_Perf,
+    col = Year,
+    percent = 'column',
+    margin = c("row","column"),
+    label = list(
+      Acad_Perf ~ "Academic Performance",
+      Year ~ "Bsed-Math Students' Year Level"
+    )
+  )
 ```
-
-## Results and Interpretation
-
-The bar chart and test statistics are shown on @fig-test.
-
-```{r}
-#| label: fig-test
-#| fig-cap: Pie chart and test statistics.
-#| fig-height: 3
-
-ggbarstats(
-  data = titanic,
-  x = Survived,
-  y = Sex,
-  bf.message = FALSE,
-  legend.title = "Survived?"
-)
-```
-
-Based on the bar chart and the *p*-value being lesser than 5% (*p*-value = .001), we reject the null hypothesis. There is a strong evidence that passenger's sex affects their survival status. Additionally, for both females and males, the survival rates were significantly different than 50% as indicated by a goodness of fit test for each gender.
