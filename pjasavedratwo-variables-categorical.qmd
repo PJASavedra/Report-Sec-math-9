@@ -55,7 +55,7 @@ The Data Set is gathered from 69 students with 2 variable.
 
 This data set provides information on the relationships of Bsed-Math Students' Year Level to their Academic Performance, given that it is Satisfactory, Good, Very Good, Excellent based from their year level.
 
-The first 6 rows of the titanic data set are shown in @tbl-Acad_Pref.
+The first 6 rows of the data set are shown in @tbl-Acad_Pref.
 
 ```{r}
 #| label: tbl-Acad_Pref
@@ -96,3 +96,67 @@ df |>
     )
   )
 ```
+
+# Hypothesis Testing
+
+## Research Question
+
+Relationship of Bsed-Math Students' Year Level to their Academic Performance?
+
+## Hypothesis and Test Statistics
+
+- $H_0:p_{year\,Level}-p_{Academic\,Performance}=0$; Bsed-Math Students' Year Level does not affect their Academic Performance.
+
+- $H_a:p_{Year\,Level}-p_{Academic\,Performance}\ne0$; Bsed-Math Students' Year Level does affect their Academic Performance.
+
+- Significance level, $\alpha=5\%\,\text{or p-value}\,\le\,.05$.
+
+- **Pearson's** $\chi^2$-test of independence
+
+- Independence.
+
+- Expected counts: Not all expecter counts are $\ge 5$ (multiple cells fall below 5; see @tbl-expected). 
+
+```{r}
+#| label: tbl-expected
+#| tbl-cap: Expected counts.
+
+# Create contingency table
+observed <- table(df$Year, df$Acad_Perf)
+
+# Perform chi-squared test
+chi_test <- chisq.test(observed)
+
+# Extract the expected counts
+expected <- chi_test$expected
+
+# View expected counts
+expected |>
+  as_tibble() |>
+  mutate(
+    " " = c("1st Year", "2nd Year", "3rd Year", "4th Year")
+  ) |>
+  relocate(" ", .before = 1) |>
+  mutate(across(where(is.numeric), ~ round(.x, 2))) |>
+  kable()
+```
+
+## Results and Interpretation
+
+The bar chart and test statistics are shown on @fig-test.
+
+```{r}
+#| label: fig-test
+#| fig-cap: Pie chart and test statistics.
+#| fig-height: 3
+
+ggbarstats(
+  data = df,
+  x = Year,
+  y = Acad_Perf,
+  type = "nonparametric",
+  bf.message = FALSE,
+  legend.title = "Bsed-Math Students' Year Level"
+)
+```
+The results show a chi-square value of 9.26 with 9 degrees of freedom and a p-value of 0.41. Since the p-value (0.41) is greater than the 0.05 level of significance, the result is not statistically significant. Therefore, we fail to reject the null hypothesis. This indicates that there is no sufficient statistical evidence of a significant relationship between students' year level and their academic performance. Furthermore, the Cramér's V value of 0.02 indicates a negligible association between the two variables. This suggests that the relationship between year level and academic performance is very weak. Based on the descriptive results, the satisfactory category consists of 42% third-year students, while the good category has the highest proportion of first-year students at 50%. In the very good category, third-year students have the highest proportion at 38%. Meanwhile, among the excellent students, 60% are first-year students and 40% are third-year students. However, this category has only five respondents, so its percentages should be interpreted cautiously. Overall, the findings suggest that the year level of BSED-Math students is not significantly associated with their academic performance. Although there are some differences in the distribution of academic performance across year levels, these differences are not statistically significant. This implies that students' academic performance does not appear to be dependent on their current year level based on the data gathered from the 66 respondents.
